@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="description" content="DMSP Global Composite Demo">
+    <meta name="author" content="">
+    <link rel="icon" href="http://www.esri.com/favicon.ico">
+    <title>DMSP Global Composite Demo</title>
+
+    <!-- Calcite Bootstrap -->
+    <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-bootstrap.min-v0.2.css">
+
+    <!-- Calcite Maps -->
+    <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.2.css">
+    <!--link rel="stylesheet" href="http://localhost/GitHub/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.2.css"-->
+
+    <!-- ArcGIS JS 4.0 -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">
+
+    <!-- Prettify Code -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?&amp;skin=sunburst"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* Style the code window */
+
+        pre.prettyprint {
+            margin: 0;
+            padding-bottom: 0;
+            width: 100%;
+            border: 0;
+            font-size: 15px; /* Sizes: 13px (small) 15px (normal) 17px (large) */
+        }
+
+        /* Adjust size of the code window */
+
+        .calcite-panels .panel-body {
+            width: 350px;
+            max-height: 700px;
+            padding: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .calcite-panels .panel-body {
+                width: 100%;
+                max-height: 250px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body class="calcite-nav-top">
+
+<!-- Navbar -->
+
+<nav class="navbar calcite-navbar navbar-fixed-top calcite-text-light calcite-bgcolor-off-black">
+
+    <!-- Menu -->
+    <div class="dropdown calcite-dropdown calcite-text-dark calcite-bg-light" role="presentation">
+        <a class="dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">
+            <div class="calcite-dropdown-toggle">
+                <span class="sr-only">Toggle dropdown menu</span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a class="hidden-sm hidden-md" href="#2dTab" aria-controls="2Dtab" role="tab" data-toggle="tab"> Map</a></li>
+            <li class="active"><a class="hidden-sm hidden-md" href="#3dTab" aria-controls="3Dtab" role="tab" data-toggle="tab"> Scene</a></li>
+            <li><a role="button" data-target="#panelBasemaps" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>
+            <li><a role="button" data-target="#panelCode" aria-haspopup="true"><span class="glyphicon glyphicon-cog"></span> Code</a></li>
+            <li><a role="button" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
+        </ul>
+    </div><!-- Title -->
+    <div class="calcite-title calcite-overflow-hidden">
+        <div class="calcite-title-main">DMSP Global Composites</div>
+        <div class="calcite-title-divider hidden-xs"></div>
+        <div class="calcite-title-sub hidden-xs">NOAA's National Centers for Environmental Information</div>
+    </div>
+    <!-- Nav -->
+    <ul class="nav navbar-nav calcite-nav">
+        <li><a id="mapNav" class="hidden-xs" href="#2dTab" aria-controls="2Dtab" aria-expanded="true" role="tab" data-toggle="tab" data-tooltip="tip" title="2D View" data-placement="bottom">Map</a></li>
+        <li class="active"><a id="sceneNav" class="hidden-xs" href="#3dTab" aria-controls="3Dtab" role="tab" data-toggle="tab" data-tooltip="tip" title="3D View" data-placement="bottom">Scene</a></li>
+        <li><div class="calcite-navbar-search calcite-search-expander"><div id="searchWidgetDiv"></div></div></li>
+    </ul>
+    </div>
+</nav><!--/.calcite-navbar -->
+
+<!-- Map  -->
+
+<div class="calcite-map calcite-map-absolute">
+    <div id="tabContainer" class="tab-content">
+        <div id="2dTab" class="tab-pane fade" role="tabpanel">
+            <div id="mapViewDiv"></div>
+        </div>
+        <div id="3dTab" class="tab-pane fade in active" role="tabpanel">
+            <div id="sceneViewDiv"></div>
+        </div>
+    </div>
+</div><!-- /.calcite-map -->
+
+<!-- Panels -->
+
+<div class="calcite-panels calcite-panels-right calcite-text-light calcite-bg-dark calcite-bgcolor-black panel-group">
+
+    <!-- Basemaps Panel -->
+
+    <div id="panelBasemaps" class="panel collapse">
+        <div id="headingBasemaps" class="panel-heading" role="tab">
+            <div class="panel-title">
+                <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseBasemaps" aria-expanded="false"   aria-controls="collapseBasemaps"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span><span class="panel-label">Basemaps</span></a>
+                <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelBasemaps"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+            </div>
+        </div>
+        <div id="collapseBasemaps" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingBasemaps">
+            <div class="panel-body">
+                <select id="selectBasemapPanel" class="form-control">
+                    <option value="streets" data-vector="streets-vector">Streets</option>
+                    <option value="satellite" data-vector="satellite" selected="">Satellite</option>
+                    <option value="hybrid" data-vector="hybrid">Hybrid</option>
+                    <option value="national-geographic" data-vector="national-geographic">National Geographic</option>
+                    <option value="topo" data-vector="topo-vector">Topographic</option>
+                    <option value="gray" data-vector="gray-vector">Gray</option>
+                    <option value="dark-gray" data-vector="dark-gray-vector">Dark Gray</option>
+                    <option value="osm" data-vector="osm">Open Street Map</option>
+                    <option value="dark-gray" data-vector="streets-night-vector">Streets Night</option>
+                    <option value="streets" data-vector="streets-navigation-vector">Streets Mobile</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Panel -->
+
+    <div id="panelCode" class="panel collapse in">
+        <div id="headingCode" class="panel-heading" role="tab">
+            <div class="panel-title">
+                <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseCode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span><span class="panel-label"> Code</span></a>
+                <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelCode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+            </div>
+        </div>
+
+        <div id="collapseCode" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingCode">
+            <div class="panel-body">
+                <!-- Your code goes here -->
+                <pre class="prettyprint lang-js calcite-bgcolor-black">
+// Map
+mapView = new MapView({
+  container: "mapViewDiv",
+  map: map,
+  center: app.center,
+  scale: app.scale,
+  padding: app.viewPadding
+});
+
+// Scene
+sceneView = new SceneView({
+  container: "sceneViewDiv",
+  map: mapScene,
+  scale: app.scale,
+  center: app.center,
+  padding: app.viewPadding,
+  visible: true
+});
+
+activeView = app.sceneView;
+          </pre>
+            </div>
+        </div>
+    </div>
+</div> <!-- /.panel-group -->
+
+<!-- Calcite Maps and Bootstrap -->
+
+<script type="text/javascript">
+    var dojoConfig = {
+        packages: [{
+            name: "bootstrap",
+            location: "https://esri.github.io/calcite-maps/dist/vendor/dojo-bootstrap"
+            //location: "http://localhost/GitHub/calcite-maps/dist/vendor/dojo-bootstrap"
+        },
+            {
+                name: "calcite-maps",
+                location: "https://esri.github.io/calcite-maps/dist/js/dojo"
+                //location: "http://localhost/GitHub/calcite-maps/dist/js/dojo"
+            }]
+    };
+</script>
+
+<!-- ArcGIS JS 4.0 -->
+
+<script src="https://js.arcgis.com/4.2/"></script>
+
+<script>
+
+    var app;
+
+    require(["esri/Map",
+        "esri/Basemap",
+        "esri/views/MapView",
+        "esri/views/SceneView",
+        "esri/widgets/Search",
+        "esri/core/watchUtils",
+        "dojo/query",
+        "esri/layers/ImageryLayer",
+        "esri/layers/MapImageLayer",
+
+        // Bootstrap
+        "bootstrap/Collapse",
+        "bootstrap/Dropdown",
+        "bootstrap/Tab",
+
+        // Calcite-maps
+        "calcite-maps/calcitemaps-v0.2",
+        "dojo/domReady!"
+    ], function(Map, Basemap, MapView, SceneView, Search, watchUtils, query, ImageryLayer, MapImageLayer) {
+//https://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer?f=jsapi
+        // App
+        app = {
+            scale: 50000000,
+            center: [-40,40],
+            initialExtent: null,
+            basemap: "streets",
+            viewPadding: {
+                top: 50
+            },
+            mapView: null,
+            sceneView: null,
+            activeView: null,
+            searchWidget: null
+        };
+
+        var layer1 = new ImageryLayer({
+//            url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/NLCDLandCover2001/ImageServer",
+            url: "https://gis.ngdc.noaa.gov/arcgis/rest/services/dmsp/stable_lights/ImageServer",
+            format: "jpgpng", // server exports in either jpg or png format
+            opacity: 0.75
+        });
+
+        var layer2 = new ImageryLayer({
+//            url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/NLCDLandCover2001/ImageServer",
+            url: "https://gis.ngdc.noaa.gov/arcgis/rest/services/dmsp/stable_lights/ImageServer",
+            format: "jpgpng", // server exports in either jpg or png format
+            opacity: 0.75
+        });
+
+        // Map
+        var map = new Map({
+            basemap: app.basemap,
+            layers: [layer1]
+        });
+
+        // Scene
+        var mapScene = new Map({
+            basemap: app.basemap,
+            layers: [layer2]
+        });
+
+        app.sceneView = new SceneView({
+            container: "sceneViewDiv",
+            map: mapScene,
+            scale: app.scale,
+            center: app.center,
+            padding: app.viewPadding
+        });
+
+        app.mapView = new MapView({
+            container: "mapViewDiv",
+            map: map,
+            scale: app.scale,
+            center: app.center,
+            padding: app.viewPadding,
+            ui: {
+                components: ["zoom", "compass", "attribution"]
+            }
+        });
+
+        app.activeView = app.sceneView;
+
+        app.activeView.then(function() {
+            app.initialExtent = app.activeView.extent;
+        });
+
+        // Search widget
+        app.searchWidget = new Search({
+            view: app.activeView
+        }, "searchWidgetDiv");
+        app.searchWidget.startup();
+
+
+        // Tabs
+        function syncTabs(e) {
+            query(".calcite-navbar li.active").removeClass("active");
+            query(e.target).addClass("active");
+        }
+
+        // Views
+        function syncViews(fromView, toView) {
+            watchUtils.whenTrueOnce(toView, "ready").then(function(result) {
+                watchUtils.whenTrueOnce(toView, "stationary").then(function(result) {
+                    toView.goTo(fromView.viewpoint);
+                    toView.popup.reposition();
+                });
+            });
+        }
+
+        // Search
+        function syncSearch() {
+            app.searchWidget.view = app.activeView;
+            // Perform search
+            if (app.searchWidget.selectedResult) {
+                app.searchWidget.search(app.searchWidget.selectedResult.name);
+                app.activeView.popup.reposition();
+            } else {
+                app.searchWidget.clear();
+            }
+        }
+
+        // Tab Events (Views)
+        query(".calcite-navbar li a[data-toggle='tab']").on("click", function(e) {
+            syncTabs(e);
+            if (e.target.text.indexOf("Map") > -1) {
+                syncViews(app.sceneView, app.mapView);
+                app.activeView = app.mapView;
+            } else {
+                syncViews(app.mapView, app.sceneView);
+                app.activeView = app.sceneView;
+            }
+            syncSearch();
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
+
